@@ -1,7 +1,8 @@
 from pydantic import BaseModel
-from typing import FrozenSet
+from typing import Optional
 
 
 class Client(BaseModel):
     index : int
-    description : str
+    rating : Optional [float] = 0
+    counter : Optional [int] = 0

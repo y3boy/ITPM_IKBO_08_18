@@ -1,6 +1,9 @@
+from typing import Optional
 from pydantic import BaseModel
+from typing import Optional
 
 
 class Client(BaseModel):
     index : int
-    description : str
+    counter :  Optional [int] = 0
+    

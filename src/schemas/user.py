@@ -7,5 +7,7 @@ class User(BaseModel):
     firstname : str
     surname : str
     patronimic : Optional [str] = None
+    phone : str
     email : str
     password : str
+    username : str
