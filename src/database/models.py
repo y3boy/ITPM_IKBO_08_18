@@ -21,11 +21,12 @@ class Client(DataBase):
     __tablename__ = 'client'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     counter = Column(Integer)
-    user = relationship("User" , back_populates="children")
+    user = relationship("User", back_populates="children")
+
 
 class Walker(DataBase):
     __tablename__ = 'walker'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    rating = Column(Float(precision=10,scale=2))
+    rating = Column(Float(precision=10, scale=2))
     counter = Column(Integer)
-    user = relationship("User" , back_populates="children")
+    user = relationship("User", back_populates="children")

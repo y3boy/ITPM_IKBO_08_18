@@ -4,6 +4,6 @@ from typing import Optional
 
 
 class Client(BaseModel):
-    index : int
-    counter :  Optional [int] = 0
+    index: int
+    counter: Optional[int] = 0
     
