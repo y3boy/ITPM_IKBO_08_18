@@ -29,9 +29,5 @@ class Client(DataBase):
 class Walker(DataBase):
     __tablename__ = 'walker'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-# <<<<<<< Updated upstream
     rating = Column(Float(precision=10), default=0)
-# =======
-#     rating = Column(Float(precision=10))
-# >>>>>>> Stashed changes
     counter = Column(Integer)
