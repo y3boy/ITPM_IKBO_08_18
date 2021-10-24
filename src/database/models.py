@@ -1,4 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Date, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Date, Boolean, Float
+from sqlalchemy.orm import relationship, backref
 
 from src.database.database import DataBase
 
@@ -13,20 +14,24 @@ class User(DataBase):
     email = Column(String(45))
     password = Column(String(45))
     username = Column(String(45))
-    client = relationship("Client", back_populates="parent")
-    walker = relationship("Walker", back_populates="parent")
+    client_id = Column(Integer, ForeignKey("client.id"))
+    client = relationship("Client", backref=backref("user", uselist=False, cascade="all,delete"))
+    walker_id = Column(Integer, ForeignKey("walker.id"))
+    walker = relationship("Walker", backref=backref("user", uselist=False, cascade="all,delete"))
     
 
 class Client(DataBase):
     __tablename__ = 'client'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    counter = Column(Integer)
-    user = relationship("User", back_populates="children")
+    counter = Column(Integer, default=0)
 
 
 class Walker(DataBase):
     __tablename__ = 'walker'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    rating = Column(Float(precision=10, scale=2))
+# <<<<<<< Updated upstream
+    rating = Column(Float(precision=10), default=0)
+# =======
+#     rating = Column(Float(precision=10))
+# >>>>>>> Stashed changes
     counter = Column(Integer)
-    user = relationship("User", back_populates="children")
