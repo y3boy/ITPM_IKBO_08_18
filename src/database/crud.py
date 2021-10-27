@@ -6,11 +6,11 @@ def __user_create(user: User):
     return User(user)
 
 
-def user_authorization(user: User, session: Session):
+def user_authorization(user: str, session: Session):
     return "Fake token"
 
 
-def client_create(session: Session, user: User):
+def client_create(user: User, session: Session):
     client = Client()
     session.add(client)
     session.commit()
@@ -22,7 +22,7 @@ def client_create(session: Session, user: User):
     return user
 
 
-def walker_create(session: Session, user: User):
+def walker_create(user: User, session: Session):
     walker = Walker()
     session.add(walker)
     session.commit()
@@ -34,7 +34,7 @@ def walker_create(session: Session, user: User):
     return user
 
 
-def user_read(session: Session, user_id):
+def user_read(user_id, session: Session):
     return session.query(User).get(user_id)
 
 
@@ -42,7 +42,7 @@ def user_read_by_username(session: Session, username):
     return session.query(User).filter(User.username == username).first()
 
 # FIXME: сделать не латентным)))0)
-def user_update(session: Session, user: User):
+def user_update(user: User, session: Session):
     user = session.query(User).get(user.id)
     if user.password:
         user.password = user.password
@@ -57,7 +57,7 @@ def user_update(session: Session, user: User):
     return user
 
 
-def user_delete(session: Session, user_id):
+def user_delete(user_id, session: Session):
     user = session.query(User).get(user_id)
     session.delete(user)
     session.commit()
