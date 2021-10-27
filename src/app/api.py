@@ -10,7 +10,7 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
 
-from src.database import models, crud
+from src.database import models
 from src.app.tags import tags_metadata
 from src.database.database import engine, SessionLocal
 from src.app.dependencies import get_db, get_settings
@@ -68,7 +68,6 @@ def startup(db: Session = Depends(get_db)):
             if time() - start > settings.timeout:
                 raise e
 
-testing_api
     with Session(engine) as db:
         pass
         # тут создаем необходимые при старте элементы
