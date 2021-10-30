@@ -71,6 +71,6 @@ def startup(db: Session = Depends(get_db)):
             if time() - start > settings.timeout:
                 raise e
 
-    with Session(engine) as db:
-        pass
+    # with Session(engine) as db:
+    #     pass
         # тут создаем необходимые при старте элементы
