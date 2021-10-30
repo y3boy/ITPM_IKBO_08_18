@@ -1,1 +1,1 @@
-web: uvicorn src.app.api:app --host=0.0.0.0 --port=${PORT:-5000}
+web: gunicorn -k uvicorn.workers.UvicornWorker --log-level debug src.app.api:app
