@@ -1,1 +1,1 @@
-web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker src.app.api:app
+web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker src.app.api:app --log-file=-
