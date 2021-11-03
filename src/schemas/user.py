@@ -3,9 +3,8 @@ from typing import Optional
 
 
 class User(BaseModel):
-    index: int
     username: str
-    password: str
+    hashed_password: str
     fullname: str
     phone: str
     email: str
