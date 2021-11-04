@@ -4,6 +4,9 @@ import string
 import hashlib
 
 from sqlalchemy.orm import Session
+from fastapi import Depends
+from fastapi_jwt_auth import AuthJWT
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from src.database.models import UserBase, Client, Walker, TokenBase
 
@@ -76,10 +79,10 @@ def user_delete(user_id, session: Session):
     return user
 
 
-def create_user_token(user_id: int, session: Session):
-    token = TokenBase(expires=datetime.now() + timedelta(weeks=2), user_id=user_id)
-    session.add(token)
-    return token
+def create_user_token(user_id: int, session: Session, Authorize: AuthJWT = Depends()):
+    access_token = Authorize.create_access_token(subject=user_id)
+    refresh_token = Authorize.create_refresh_token(subject=user_id)
+    return {"access_token": access_token, "refresh_token": refresh_token}
 
 
 def hash_password(password: str, salt: str = None):

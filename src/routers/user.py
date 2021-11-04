@@ -1,19 +1,20 @@
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException
-from src.schemas.user import UserBase
+from fastapi import APIRouter, Depends, HTTPException, Security
+from fastapi_jwt_auth import AuthJWT
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
 
+from src.schemas.user import UserBase
 from src.database import crud
 from src.app.dependencies import get_db
-
-from fastapi.security import OAuth2PasswordRequestForm
-from src.schemas.user import TokenBase
+from src.schemas.user import TokenBase, UserLogin
 
 router = APIRouter(prefix="/user", tags=["User"])
+security = HTTPBearer()
 
 
 @router.post("/auth", status_code=200, response_model=TokenBase)
-async def auth_user(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_db)):
-    user = crud.user_read_by_username(username=form_data.username, session=session)
+async def auth_user(form_data: UserLogin, session: Session = Depends(get_db)):
+    user = crud.user_read_by_username(username=form_data.login, session=session)
     print(user)
     if not user:
         print('test1')
@@ -39,10 +40,14 @@ async def create_walker(user_info: UserBase, session: Session = Depends(get_db))
 
 
 @router.patch("/", status_code=200)
-async def update_user(user_id: int, user_info: UserBase, session: Session = Depends(get_db)):
-    return crud.user_update(user_id, user_info, session)
+async def update_user(user_info: UserBase, session: Session = Depends(get_db),
+                      Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
+    Authorize.jwt_required()
+    return crud.user_update(int(Authorize.get_jwt_subject()), user_info, session)
 
 
 @router.delete("/", status_code=200)
-async def delete_user(user_id: int, session: Session = Depends(get_db)):
-    return crud.user_delete(user_id, session)
+async def delete_user(session: Session = Depends(get_db),
+                      Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
+    Authorize.jwt_required()
+    return crud.user_delete(int(Authorize.get_jwt_subject()), session)
