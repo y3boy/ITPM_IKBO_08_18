@@ -13,7 +13,7 @@ security = HTTPBearer()
 
 
 @router.post("/auth", status_code=200, response_model=TokenBase)
-async def auth_user(form_data: UserLogin, session: Session = Depends(get_db)):
+async def auth_user(form_data: UserLogin, session: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     user = crud.user_read_by_username(username=form_data.login, session=session)
     print(user)
     if not user:
@@ -23,7 +23,7 @@ async def auth_user(form_data: UserLogin, session: Session = Depends(get_db)):
         print('test2')
         raise HTTPException(status_code=400, detail="Incorrect login or password")
     print('test3')
-    result = crud.create_user_token(user_id=user.id, session=session)
+    result = crud.create_user_token(user_id=user.id, session=session, Authorize=Authorize)
     print('---------')
     print(result)
     return result
