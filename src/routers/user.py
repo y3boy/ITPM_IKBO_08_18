@@ -12,7 +12,7 @@ router = APIRouter(prefix="/user", tags=["User"])
 security = HTTPBearer()
 
 
-@router.post("/auth", status_code=200, response_model=TokenBase)
+@router.post("/auth", status_code=200)
 async def auth_user(form_data: UserLogin, session: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     user = crud.user_read_by_username(username=form_data.login, session=session)
     print(user)
