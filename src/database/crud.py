@@ -79,7 +79,6 @@ def user_delete(user_id, session: Session):
 def create_user_token(user_id: int, session: Session):
     token = TokenBase(expires=datetime.now() + timedelta(weeks=2), user_id=user_id)
     session.add(token)
-    session.commit()
     return token
 
 
