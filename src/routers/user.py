@@ -29,6 +29,14 @@ async def auth_user(form_data: UserLogin, session: Session = Depends(get_db), Au
     return result
 
 
+@router.post("/token", status_code=200)
+async def refresh_token(Authorize: AuthJWT = Depends()):
+    Authorize.jwt_refresh_token_required()
+    user = Authorize.get_jwt_subject()
+    new_access_token = Authorize.create_access_token(subject=user)
+    return {"access_token": new_access_token}
+
+
 @router.post("/client", status_code=200)
 async def create_client(user_info: UserBase, session: Session = Depends(get_db)):
     return crud.client_create(user_info, session)
