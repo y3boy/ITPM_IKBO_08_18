@@ -12,8 +12,9 @@ class UserBase(DataBase):
     username = Column(String(45), nullable=False)
     hashed_password = Column(String(), nullable=False)
     fullname = Column(String(135))
-    phone = Column(String(12))
+    phone = Column(String(12), nullable=False)
     email = Column(String(45))
+    avatar_url = Column(String)
     client_id = Column(Integer, ForeignKey("client.id"))  # One to One
     client = relationship("Client", backref=backref("user", uselist=False, cascade="all,delete"))
     walker_id = Column(Integer, ForeignKey("walker.id"))  # One to One
@@ -69,4 +70,4 @@ class Dog(DataBase):
     user_id = Column(Integer, ForeignKey('user.id'))
     breed = Column(String(100), nullable=False)
     nickname = Column(String(100), nullable=False)
-
+    avatar_url = Column(String)
