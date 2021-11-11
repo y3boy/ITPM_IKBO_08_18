@@ -8,7 +8,7 @@ from fastapi import Depends
 from fastapi_jwt_auth import AuthJWT
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from src.database.models import UserBase, Client, Walker, TokenBase
+from src.database.models import UserBase, Client, Walker, TokenBase, Dog
 
 
 def __create_user(user_arg: UserBase):
@@ -30,8 +30,8 @@ def client_create(user_arg: UserBase, session: Session):
     return user
 
 
-def walker_create(user_arg: UserBase, session: Session):
-    walker = Walker()
+def walker_create(user_arg: UserBase, walker_arg: Walker, session: Session):
+    walker = Walker(**walker_arg.dict())
     session.add(walker)
     session.commit()
 
@@ -42,8 +42,22 @@ def walker_create(user_arg: UserBase, session: Session):
     return user
 
 
-def user_read(user_id, session: Session):
+def user_read(user_id: int, session: Session):
     return session.query(UserBase).get(user_id)
+
+
+def walker_read(user_id: int, session: Session):
+    user = user_read(user_id, session)
+    if user:
+        if user.walker_id:
+            return session.query(Walker).get(user.walker_id)
+
+
+def client_read(user_id: int, session: Session):
+    user = user_read(user_id, session)
+    if user:
+        if user.client_id:
+            return session.query(Client).get(user.client_id)
 
 
 def user_read_by_username(session: Session, username):
@@ -93,6 +107,20 @@ def hash_password(password: str, salt: str = None):
 
 
 def validate_password(password: str, hashed_password: str):
-    print(hashed_password)
     salt, hashed = hashed_password.split("$")
     return hash_password(password, salt) == hashed
+
+
+def create_dog(user_id: int, dog_arg: Dog, session: Session):
+    dog = Dog(user_id=user_id, **dog_arg.dict())
+    session.add(dog)
+    session.commit()
+    return dog
+
+
+def dog_read(dog_id: int, session: Session):
+    return session.query(Dog).get(dog_id)
+
+
+def get_all_user_dog(user_id: int, session: Session):
+    return session.query(Dog).filter(Dog.user_id == user_id).all()
