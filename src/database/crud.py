@@ -124,3 +124,10 @@ def dog_read(dog_id: int, session: Session):
 
 def get_all_user_dog(user_id: int, session: Session):
     return session.query(Dog).filter(Dog.user_id == user_id).all()
+
+
+def dog_delete(dog_id, session: Session):
+    dog = session.query(Dog).get(dog_id)
+    session.delete(dog)
+    session.commit()
+    return dog

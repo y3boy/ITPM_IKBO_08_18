@@ -82,3 +82,8 @@ async def get_all_user_dog(session: Session = Depends(get_db),
                            Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     return crud.get_all_user_dog(int(Authorize.get_jwt_subject()), session)
+
+
+@router.delete("/dog", status_code=200)
+async def delete_dog(dog_id: int, session: Session = Depends(get_db)):
+    return crud.dog_delete(dog_id, session)
