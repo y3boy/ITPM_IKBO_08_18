@@ -14,6 +14,7 @@ class UserBase(BaseModel):
     fullname: str
     phone: str
     email: str
+    avatar_url: str
 
 
 class TokenBase(BaseModel):
