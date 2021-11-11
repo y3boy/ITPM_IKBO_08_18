@@ -18,11 +18,10 @@ security = HTTPBearer()
 async def auth_user(form_data: UserLogin, session: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     user = crud.user_read_by_username(username=form_data.login, session=session)
     if not user:
-        raise HTTPException(status_code=400, detail="Incorrect login or password")
+        raise HTTPException(status_code=400, detail='Incorrect login or password')
     if not crud.validate_password(password=form_data.password, hashed_password=user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect login or password")
-    result = crud.create_user_token(user_id=user.id, session=session, Authorize=Authorize)
-    return result
+        raise HTTPException(status_code=400, detail='Incorrect login or password')
+    return crud.create_user_token(user_id=user.id, session=session, Authorize=Authorize)
 
 
 @router.post("/client", status_code=200)
@@ -60,7 +59,7 @@ async def create_dog(dog_info: Dog, session: Session = Depends(get_db),
 async def get_user(session: Session = Depends(get_db),
                    Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
-    return crud.dog_read(int(Authorize.get_jwt_subject()), session)
+    return crud.user_read(int(Authorize.get_jwt_subject()), session)
 
 
 @router.get("/walker", status_code=200)
