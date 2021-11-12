@@ -14,12 +14,15 @@ from src.database import models
 from src.app.tags import tags_metadata
 from src.database.database import engine, SessionLocal
 from src.app.dependencies import get_db, get_settings
-from src.routers import user
+from src.routers import user, walker, client, dog
 
 
 app = FastAPI(title="Group project backend", version="1.0", openapi_tags=tags_metadata,
               dependencies=[Depends(get_db)])
 app.include_router(user.router)
+app.include_router(walker.router)
+app.include_router(client.router)
+app.include_router(dog.router)
 
 settings = get_settings()
 
