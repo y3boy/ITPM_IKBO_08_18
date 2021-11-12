@@ -14,18 +14,17 @@ def create_order_for_client(user_id: int, order_arg: OrderBase, session: Session
     walker = crud_walker.get_walker(order.walker_id, session)
 
     if client and walker:
-        price = order.numbers_of_hours * walker.price_per_hour
+        order.price = order.numbers_of_hours * walker.price_per_hour
         if client.counter < 5:
-            price *= 1.05
+            order.commission = order.price * 0.05
         elif client.counter < 10:
-            price *= 1.04
+            order.commission = order.price * 0.04
         elif client.counter < 15:
-            price *= 1.03
+            order.commission = order.price * 0.03
         elif client.counter < 20:
-            price *= 1.02
+            order.commission = order.price * 0.02
         else:
-            price *= 1.01
-        order.price = price
+            order.commission = order.price * 0.01
 
         session.add(order)
         session.commit()

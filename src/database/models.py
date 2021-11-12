@@ -89,6 +89,7 @@ class Order(DataBase):
     datetime_of_walking = Column(DateTime, nullable=False)
     numbers_of_hours = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
+    commission = Column(Integer, nullable=False)
     description = Column(Text)
 
     walker_took_order = Column(Boolean, default=None)
