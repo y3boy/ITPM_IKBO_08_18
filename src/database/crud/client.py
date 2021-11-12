@@ -4,8 +4,8 @@ from src.database.models import UserBase, Client
 from src.database.crud.user import create_user_obj, get_user, delete_user
 
 
-def create_client(user_arg: UserBase, client_arg: Client, session: Session):
-    client = Client(**client_arg.dict())
+def create_client(user_arg: UserBase, session: Session):
+    client = Client()
     session.add(client)
     session.commit()
 

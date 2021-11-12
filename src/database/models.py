@@ -76,12 +76,15 @@ class Dog(DataBase):
     nickname = Column(String(100), nullable=False)
     avatar_url = Column(String)
 
+    relationship("Order")
+
 
 class Order(DataBase):
     __tablename__ = 'order'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     client_id = Column(Integer, ForeignKey('client.id'), nullable=False)
     walker_id = Column(Integer, ForeignKey('walker.id'), nullable=False)
+    client_dog_id = Column(Integer, ForeignKey('dog.id'), nullable=False)
     datetime_of_creation = Column(DateTime, nullable=False)
     datetime_of_walking = Column(DateTime, nullable=False)
     numbers_of_hours = Column(Integer, nullable=False)
