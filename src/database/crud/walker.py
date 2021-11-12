@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.database.models import UserBase, Walker
-from src.database.crud.user import create_user_obj, get_user, delete_user
+from src.database.crud.user import create_user_obj, get_user
 
 
 def create_walker(user_arg: UserBase, walker_arg: Walker, session: Session):

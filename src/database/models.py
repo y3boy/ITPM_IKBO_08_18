@@ -43,6 +43,8 @@ class Client(DataBase):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     counter = Column(Integer, default=0, nullable=False)
 
+    relationship("Order")
+
 
 class Walker(DataBase):
     __tablename__ = 'walker'
@@ -63,11 +65,29 @@ class Walker(DataBase):
     schedule = Column(Text)
     about_walker = Column(Text)
 
+    relationship("Order")
+
 
 class Dog(DataBase):
-    __tablename__ = 'Dog'
+    __tablename__ = 'dog'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('user.id'))
     breed = Column(String(100), nullable=False)
     nickname = Column(String(100), nullable=False)
     avatar_url = Column(String)
+
+
+class Order(DataBase):
+    __tablename__ = 'order'
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    client_id = Column(Integer, ForeignKey('client.id'), nullable=False)
+    walker_id = Column(Integer, ForeignKey('walker.id'), nullable=False)
+    datetime_of_creation = Column(DateTime, nullable=False)
+    datetime_of_walking = Column(DateTime, nullable=False)
+    numbers_of_hours = Column(Integer, nullable=False)
+    price = Column(Integer, nullable=False)
+    description = Column(Text)
+
+    walker_took_order = Column(Boolean, default=None)
+    client_confirmed_execution = Column(Boolean, default=None)
+    paid = Column(Boolean, default=None)

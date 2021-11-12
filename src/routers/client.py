@@ -13,7 +13,7 @@ security = HTTPBearer()
 
 
 @router.post("/", status_code=200)
-async def create_walker(user_info: UserBase, client_info: Client, session: Session = Depends(get_db)):
+async def create_client(user_info: UserBase, client_info: Client, session: Session = Depends(get_db)):
     return client_crud.create_client(user_arg=user_info, client_arg=client_info, session=session)
 
 
