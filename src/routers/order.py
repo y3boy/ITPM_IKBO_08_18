@@ -18,18 +18,18 @@ async def create_order_for_client(order_info: OrderBase, session: Session = Depe
     return order_crud.create_order_for_client(user_id=int(Authorize.get_jwt_subject()), order_arg=order_info, session=session)
 
 
-@router.get("/", status_code=200)
+@router.get("/client", status_code=200)
 async def get_all_user_order_for_client(session: Session = Depends(get_db),
                            Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     return order_crud.get_all_user_order_for_client(int(Authorize.get_jwt_subject()), session)
 
 
-@router.get("/", status_code=200)
-async def get_all_user_order_for_client(session: Session = Depends(get_db),
+@router.get("/walker", status_code=200)
+async def get_all_user_order_for_walker(session: Session = Depends(get_db),
                            Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
-    return order_crud.get_all_user_order_for_client(int(Authorize.get_jwt_subject()), session)
+    return order_crud.get_all_user_order_for_walker(int(Authorize.get_jwt_subject()), session)
 
 
 @router.patch("/", status_code=200)
