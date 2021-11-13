@@ -50,7 +50,7 @@ class Walker(DataBase):
     __tablename__ = 'walker'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     rating = Column(Float(precision=10), default=0)
-    counter = Column(Integer, nullable=False)
+    counter = Column(Integer, nullable=False, default=0)
 
     # For search filter
     region_code = Column(Integer, nullable=False)
