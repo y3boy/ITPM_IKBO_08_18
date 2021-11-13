@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.schemas.order import OrderBase, OrderEdit
-from src.database.models import Order
+from src.database.models import Order, User, Dog
 from src.database.crud import client as crud_client
 from src.database.crud import walker as crud_walker
 from src.database.crud import user as crud_user
@@ -32,7 +32,10 @@ def create_order_for_client(user_id: int, order_arg: OrderBase, session: Session
 
 
 def get_order(order_id: int, session: Session):
-    return session.query(Order).get(order_id)
+    order = session.query(Order).get(order_id)
+    client = session.query(User).get(order.client_id)
+    dog = session.query(Dog).get(order.client_dog_id)
+    return {'order': order, 'client': client, 'dog': dog}
 
 
 def get_all_user_order_for_client(user_id: int, session: Session):
