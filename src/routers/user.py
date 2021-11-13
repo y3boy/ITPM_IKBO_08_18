@@ -40,3 +40,11 @@ async def auth_user(form_data: UserLogin, session: Session = Depends(get_db), Au
     if not user_crud.validate_password(password=form_data.password, hashed_password=user.hashed_password):
         raise HTTPException(status_code=400, detail='Incorrect login or password')
     return user_crud.create_user_token(user_id=user.id, session=session, Authorize=Authorize)
+
+
+@router.post("/token", status_code=200)
+async def refresh_token(Authorize: AuthJWT = Depends()):
+    Authorize.jwt_refresh_token_required()
+    user = Authorize.get_jwt_subject()
+    new_access_token = Authorize.create_access_token(subject=user)
+    return {"access_token": new_access_token}
