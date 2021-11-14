@@ -72,6 +72,8 @@ class Dog(DataBase):
     breed = Column(String(100), nullable=False)
     nickname = Column(String(100), nullable=False)
     avatar_url = Column(String)
+    size_in_kg = Column(Integer)
+    date_of_birth = Column(DateTime)
 
     relationship("Order")
 
