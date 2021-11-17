@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
 
-from src.schemas.order import OrderBase, OrderEdit
 from src.database.models import Order, User, Dog
 from src.database.crud import client as crud_client
 from src.database.crud import walker as crud_walker
 from src.database.crud import user as crud_user
+from src.schemas import order as pd_order
 
 
-def create_order_for_client(user_id: int, order_arg: OrderBase, session: Session):
+def create_order_for_client(user_id: int, order_arg: pd_order.OrderBase, session: Session):
     order = Order(**order_arg.dict())
     order.client_id = user_id
     client = crud_client.get_client(order.client_id, session)
@@ -51,7 +51,7 @@ def get_all_user_order_for_walker(user_id: int, session: Session):
         return session.query(Order).filter(Order.walker_id == user_id).all()
 
 
-def set_order(order_id: int, order_arg: OrderEdit, session: Session):
+def set_order(order_id: int, order_arg: pd_order.OrderEdit, session: Session):
     order = session.query(Order).get(order_id)
     if order:
         if order_arg.walker_took_order:
@@ -60,6 +60,10 @@ def set_order(order_id: int, order_arg: OrderEdit, session: Session):
             order.client_confirmed_execution = order_arg.client_confirmed_execution
         if order_arg.paid:
             order.paid = order_arg.paid
+        if order_arg.review:
+            order.review = order_arg.review
+        if order_arg.rating:
+            order.rating = order_arg.rating
         session.add(order)
         session.commit()
         return order

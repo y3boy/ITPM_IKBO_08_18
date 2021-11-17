@@ -18,6 +18,9 @@ class OrderEdit(BaseModel):
     client_confirmed_execution: Optional[bool]
     paid: Optional[bool]
 
+    rating: Optional[float]
+    review: Optional[str]
+
 
 class Order(BaseModel):
     client_id: int
@@ -29,6 +32,9 @@ class Order(BaseModel):
     price: int
     commission: int
     description: Optional[str]
+
+    rating: Optional[float]
+    review: Optional[str]
 
     walker_took_order: Optional[bool]
     client_confirmed_execution: Optional[bool]

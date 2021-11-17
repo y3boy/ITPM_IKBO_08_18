@@ -2,10 +2,11 @@ from sqlalchemy.orm import Session
 
 from src.database.models import UserBase, Walker
 from src.schemas import walker as pd_walker
+from src.schemas import user as pd_user
 from src.database.crud.user import create_user_obj, get_user
 
 
-def create_walker(user_arg: UserBase, walker_arg: pd_walker.WalkerCreate, session: Session):
+def create_walker(user_arg: pd_user.UserBase, walker_arg: pd_walker.WalkerCreate, session: Session):
     walker = Walker(**walker_arg.dict())
     session.add(walker)
     session.commit()
@@ -28,7 +29,7 @@ def get_all_walker(session: Session):
     return session.query(Walker).all()
 
 
-def set_walker(user_id: int, walker_arg: pd_walker.Walker, session: Session):
+def set_walker(user_id: int, walker_arg: pd_walker.WalkerEdit, session: Session):
     user = session.query(UserBase).get(user_id)
     if user:
         walker = session.query(Walker).get(user.walker_id)

@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
 
 from src.database.models import UserBase, Client
-from src.database.crud.user import create_user_obj, get_user, delete_user
+from src.database.crud.user import create_user_obj, get_user
+from src.schemas import client as pd_client
+from src.schemas import user as pd_user
 
 
-def create_client(user_arg: UserBase, session: Session):
+def create_client(user_arg: pd_user.UserBase, session: Session):
     client = Client()
     session.add(client)
     session.commit()
@@ -23,7 +25,7 @@ def get_client(user_id: int, session: Session):
             return session.query(Client).get(user.client_id)
 
 
-def set_client(user_id: int, client_arg: Client, session: Session):
+def set_client(user_id: int, client_arg: pd_client.ClientEdit, session: Session):
     user = session.query(UserBase).get(user_id)
     if user:
         client = session.query(Client).get(user.walker_id)

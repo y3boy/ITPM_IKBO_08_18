@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from src.database.crud import client as client_crud
 from src.app.dependencies import get_db
 from src.schemas.user import UserBase
-from src.schemas.client import Client
+from src.schemas.client import Client, ClientEdit
 
 router = APIRouter(prefix="/client", tags=["Client"])
 security = HTTPBearer()
@@ -25,7 +25,7 @@ async def get_client(session: Session = Depends(get_db),
 
 
 @router.patch("/", status_code=200)
-async def set_client(client_info: Client, session: Session = Depends(get_db),
+async def set_client(client_info: ClientEdit, session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     return client_crud.set_client(int(Authorize.get_jwt_subject()), client_info, session)

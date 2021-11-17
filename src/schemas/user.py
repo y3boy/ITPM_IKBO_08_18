@@ -17,6 +17,15 @@ class UserBase(BaseModel):
     avatar_url: str
 
 
+class UserEdit(BaseModel):
+    username: Optional[str]
+    hashed_password: Optional[str]
+    fullname: Optional[str]
+    phone: Optional[str]
+    email: Optional[str]
+    avatar_url: Optional[str]
+
+
 class TokenBase(BaseModel):
     token: UUID4 = Field(..., alias="access_token")
     expires: datetime

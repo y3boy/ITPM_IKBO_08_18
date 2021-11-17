@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from src.database.crud import walker as walker_crud
 from src.app.dependencies import get_db
 from src.schemas.user import UserBase
-from src.schemas.walker import Walker, WalkerCreate
+from src.schemas.walker import Walker, WalkerCreate, WalkerEdit
 
 router = APIRouter(prefix="/walker", tags=["Walker"])
 security = HTTPBearer()
@@ -30,7 +30,7 @@ async def get_all_walker(session: Session = Depends(get_db)):
 
 
 @router.patch("/", status_code=200)
-async def set_walker(walker_info: Walker, session: Session = Depends(get_db),
+async def set_walker(walker_info: WalkerEdit, session: Session = Depends(get_db),
                      Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     return walker_crud.set_walker(int(Authorize.get_jwt_subject()), walker_info, session)

@@ -91,6 +91,9 @@ class Order(DataBase):
     commission = Column(Integer, nullable=False)
     description = Column(Text)
 
+    rating = Column(Float)
+    review = Column(Text)
+
     walker_took_order = Column(Boolean, default=None)
     client_confirmed_execution = Column(Boolean, default=None)
     paid = Column(Boolean, default=None)

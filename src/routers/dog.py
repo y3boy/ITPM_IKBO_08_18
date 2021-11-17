@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.database.crud import dog as dog_crud
 from src.app.dependencies import get_db
-from src.schemas.dog import Dog
+from src.schemas.dog import Dog, DogEdit
 
 router = APIRouter(prefix="/dog", tags=["Dog"])
 security = HTTPBearer()
@@ -26,7 +26,7 @@ async def get_all_user_dog(session: Session = Depends(get_db),
 
 
 @router.patch("/", status_code=200)
-async def set_dog(dog_info: Dog, session: Session = Depends(get_db),
+async def set_dog(dog_info: DogEdit, session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     return dog_crud.set_dog(int(Authorize.get_jwt_subject()), dog_info, session)

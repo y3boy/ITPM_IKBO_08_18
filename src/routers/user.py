@@ -4,7 +4,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
-from src.schemas.user import UserLogin, UserBase
+from src.schemas.user import UserLogin, UserBase, UserEdit
 from src.database.crud import user as user_crud
 
 router = APIRouter(prefix="/user", tags=["User"])
@@ -19,7 +19,7 @@ async def get_user(session: Session = Depends(get_db),
 
 
 @router.patch("/", status_code=200)
-async def set_user(user_info: UserBase, session: Session = Depends(get_db),
+async def set_user(user_info: UserEdit, session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     return user_crud.set_user(int(Authorize.get_jwt_subject()), user_info, session)

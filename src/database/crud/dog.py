@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 
 from src.database.models import Dog
+from src.schemas import dog as pd_dog
 
 
-def create_dog(user_id: int, dog_arg: Dog, session: Session):
+def create_dog(user_id: int, dog_arg: pd_dog.Dog, session: Session):
     dog = Dog(user_id=user_id, **dog_arg.dict())
     session.add(dog)
     session.commit()
@@ -18,7 +19,7 @@ def get_all_dog_by_user_id(user_id: int, session: Session):
     return session.query(Dog).filter(Dog.user_id == user_id).all()
 
 
-def set_dog(dog_id: int, dog_arg: Dog, session: Session):
+def set_dog(dog_id: int, dog_arg: pd_dog.DogEdit, session: Session):
     dog = session.query(Dog).get(dog_id)
     if dog:
         if dog_arg.breed:
