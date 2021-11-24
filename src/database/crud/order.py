@@ -41,14 +41,14 @@ def get_order(order_id: int, session: Session):
 def get_all_user_order_for_client(user_id: int, session: Session):
     user = crud_user.get_user(user_id, session)
     if user.client_id:
-        return session.query(Order).filter(Order.client_id == user_id).all()
+        return session.query(Order, Dog).filter(Order.client_id == user_id).filter(Dog.id == Order.client_dog_id).all()
     return 'Ты лох'
 
 
 def get_all_user_order_for_walker(user_id: int, session: Session):
     user = crud_user.get_user(user_id, session)
     if user.walker_id:
-        return session.query(Order).filter(Order.walker_id == user_id).all()
+        return session.query(Order, Dog).filter(Order.walker_id == user_id).filter(Dog.id == Order.client_dog_id).all()
 
 
 def set_order(order_id: int, order_arg: pd_order.OrderEdit, session: Session):
