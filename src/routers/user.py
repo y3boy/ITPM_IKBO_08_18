@@ -1,51 +1,87 @@
-from fastapi import APIRouter, Depends, HTTPException, Security
+import os
+from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException, Security, UploadFile, File
+from fastapi.encoders import jsonable_encoder
 from fastapi_jwt_auth import AuthJWT
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
-from src.schemas.user import UserLogin, UserBase, UserEdit
-from src.database.crud import user as user_crud
+from src.models.user import UserOut, UserUpdate, UserCreate
+from src.repositories import user
 
 router = APIRouter(prefix="/user", tags=["User"])
 security = HTTPBearer()
 
 
-@router.get("/", status_code=200)
-async def get_user(session: Session = Depends(get_db),
+@router.get("/curr", status_code=200, response_model=UserOut)
+async def get_current_user(session: Session = Depends(get_db),
                    Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
-    return user_crud.get_user(int(Authorize.get_jwt_subject()), session)
+    curr_user = user.get_user_by_id(int(Authorize.get_jwt_subject()), session)
+    if not curr_user:
+        raise HTTPException(status_code=400, detail='User with this email does not exist')
+    return curr_user
 
 
-@router.patch("/", status_code=200)
-async def set_user(user_info: UserEdit, session: Session = Depends(get_db),
+@router.get("/", status_code=200, response_model=UserOut)
+async def get_user_by_id(id: int, session: Session = Depends(get_db)):
+    curr_user = user.get_user_by_id(id, session)
+    if not curr_user:
+        raise HTTPException(status_code=400, detail='User with this id does not exist')
+    return curr_user
+
+
+@router.get("/all", status_code=200, response_model=List[UserOut])
+async def get_all_user(limit: int = 100, skip: int = 0, session: Session = Depends(get_db)):
+    return user.get_all_user(session, limit, skip)
+
+
+@router.post("/", status_code=200, response_model=UserOut)
+async def create_user(user_info: UserCreate, session: Session = Depends(get_db)):
+    curr_user = user.create_user(u=user_info, s=session)
+    if not curr_user:
+        raise HTTPException(status_code=400, detail='User with this email already exists')
+    return curr_user
+
+
+@router.patch("/", status_code=200, response_model=UserOut)
+async def edit_current_user(user_info: UserUpdate, session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
-    return user_crud.set_user(int(Authorize.get_jwt_subject()), user_info, session)
+    curr_user = user.edit_user(u=user_info, id=int(Authorize.get_jwt_subject()), s=session)
+    if not curr_user:
+        raise HTTPException(status_code=400, detail='Editing failed')
+    return curr_user
 
 
-@router.delete("/", status_code=200)
-async def delete_user(session: Session = Depends(get_db),
+@router.patch("/avatar", status_code=200, response_model=UserOut)
+async def edit_current_user_avatar(image: UploadFile = File(...), session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
-    return user_crud.delete_user(int(Authorize.get_jwt_subject()), session)
+    try:
+        os.mkdir('avatars')
+    except Exception as e:
+        pass
+    try:
+        os.mkdir('avatars\\user')
+    except Exception as e:
+        pass
+    file_name = os.getcwd() + '\\avatars\\user\\' + str(Authorize.get_jwt_subject()) + '.' + image.filename.split('.')[-1]
+    with open(file_name, 'wb+') as f:
+        f.write(image.file.read())
+        f.close()
+    return user.edit_avatar_path(int(Authorize.get_jwt_subject()), jsonable_encoder(file_name), session)
 
 
-@router.post("/auth", status_code=200)
-async def auth_user(form_data: UserLogin, session: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
-    user = user_crud.get_user_by_username(username=form_data.login, session=session)
-    if not user:
-        raise HTTPException(status_code=400, detail='Incorrect login or password')
-    if not user_crud.validate_password(password=form_data.password, hashed_password=user.hashed_password):
-        raise HTTPException(status_code=400, detail='Incorrect login or password')
-    return user_crud.create_user_token(user_id=user.id, session=session, Authorize=Authorize)
-
-
-@router.post("/token", status_code=200)
-async def refresh_token(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_refresh_token_required()
-    user = Authorize.get_jwt_subject()
-    new_access_token = Authorize.create_access_token(subject=user)
-    new_refresh_token = Authorize.create_refresh_token(subject=user)
-    return {"access_token": new_access_token, 'refresh_token': new_refresh_token}
+@router.delete("/avatar", status_code=200, response_model=UserOut)
+async def delete_current_user_avatar(session: Session = Depends(get_db),
+                        Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
+    Authorize.jwt_required()
+    curr_user = user.get_user_by_id(int(Authorize.get_jwt_subject()), session)
+    try:
+        os.remove(curr_user.avatar_path)
+        return user.delete_avatar_path(int(Authorize.get_jwt_subject()), session)
+    except Exception as e:
+        pass

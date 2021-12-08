@@ -2,7 +2,6 @@ from time import time
 
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
-from typing import Optional
 from fastapi import FastAPI, Request, Response, Depends
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,18 +9,17 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
 
-from src.database import models
 from src.app.tags import tags_metadata
-from src.database.database import engine, SessionLocal
+from src.db.database import engine, SessionLocal, DataBase
 from src.app.dependencies import get_db, get_settings
-from src.routers import user, walker, client, dog, order
+from src.routers import user, walker, dog, order, auth
 
 
 app = FastAPI(title="Group project backend", version="1.0", openapi_tags=tags_metadata,
               dependencies=[Depends(get_db)])
+app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(walker.router)
-app.include_router(client.router)
 app.include_router(dog.router)
 app.include_router(order.router)
 
@@ -69,12 +67,8 @@ def startup(db: Session = Depends(get_db)):
     connected = False
     while not connected:
         try:
-            models.DataBase.metadata.create_all(bind=engine)
+            DataBase.metadata.create_all(bind=engine)
             connected = True
         except OperationalError as e:
             if time() - start > settings.timeout:
                 raise e
-
-    # with Session(engine) as db:
-    #     pass
-        # тут создаем необходимые при старте элементы
