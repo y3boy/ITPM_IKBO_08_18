@@ -21,6 +21,7 @@ class OrderOut(BaseModel):
 
     client_id: int
     walker_id: int
+    dog_id: int
 
     class Config:
         orm_mode = True

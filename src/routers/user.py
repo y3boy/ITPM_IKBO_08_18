@@ -46,7 +46,7 @@ async def create_user(user_info: UserCreate, session: Session = Depends(get_db),
     if not curr_user:
         raise HTTPException(status_code=400, detail='User with this email already exists')
     token = user.create_user_token(curr_user.id, Authorize)
-    return UserToken(user=curr_user, token=token)
+    return UserToken(User=curr_user, Token=token)
 
 
 @router.patch("/", status_code=200, response_model=UserOut)

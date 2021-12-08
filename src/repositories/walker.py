@@ -9,6 +9,7 @@ from src.db.walker import Walker
 def create_walker(w: WalkerCreate, s: Session):
     walker = Walker()
     walker.price_per_hour = w.price_per_hour
+    walker.stations = w.stations
     walker.min_dog_size_in_kg = w.min_dog_size_in_kg
     walker.max_dog_size_in_kg = w.max_dog_size_in_kg
     walker.min_dog_age_in_years = w.min_dog_age_in_years
@@ -37,6 +38,7 @@ def edit_walker(w: WalkerUpdate, id: int, s: Session):
     walker.rating = w.rating
     walker.price_per_hour = w.price_per_hour
     walker.counter = w.counter
+    walker.stations = w.stations
     walker.min_dog_size_in_kg = w.min_dog_size_in_kg
     walker.max_dog_size_in_kg = w.max_dog_size_in_kg
     walker.min_dog_age_in_years = w.min_dog_age_in_years

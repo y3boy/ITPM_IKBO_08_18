@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, root_validator
 
 
@@ -7,6 +7,7 @@ class WalkerOut(BaseModel):
     rating: int
     counter: int
     price_per_hour: int
+    stations: List[int]
     min_dog_size_in_kg: Optional[int]
     max_dog_size_in_kg: Optional[int]
     min_dog_age_in_years: Optional[int]
@@ -20,6 +21,7 @@ class WalkerOut(BaseModel):
 
 class WalkerCreate(BaseModel):
     price_per_hour: int
+    stations: List[int]
     min_dog_size_in_kg: Optional[int]
     max_dog_size_in_kg: Optional[int]
     min_dog_age_in_years: Optional[int]
@@ -54,6 +56,7 @@ class WalkerUpdate(BaseModel):
     rating: int
     price_per_hour: int
     counter: int
+    stations: List[int]
     min_dog_size_in_kg: Optional[int]
     max_dog_size_in_kg: Optional[int]
     min_dog_age_in_years: Optional[int]
