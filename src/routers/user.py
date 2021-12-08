@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
 from src.models.user import UserOut, UserUpdate, UserCreate
+from src.models.general import UserToken
 from src.repositories import user
 
 router = APIRouter(prefix="/user", tags=["User"])
@@ -38,12 +39,14 @@ async def get_all_user(limit: int = 100, skip: int = 0, session: Session = Depen
     return user.get_all_user(session, limit, skip)
 
 
-@router.post("/", status_code=200, response_model=UserOut)
-async def create_user(user_info: UserCreate, session: Session = Depends(get_db)):
+@router.post("/", status_code=200, response_model=UserToken)
+async def create_user(user_info: UserCreate, session: Session = Depends(get_db),
+                      Authorize: AuthJWT = Depends()):
     curr_user = user.create_user(u=user_info, s=session)
     if not curr_user:
         raise HTTPException(status_code=400, detail='User with this email already exists')
-    return curr_user
+    token = user.create_user_token(curr_user.id, Authorize)
+    return UserToken(user=curr_user, token=token)
 
 
 @router.patch("/", status_code=200, response_model=UserOut)

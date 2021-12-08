@@ -19,29 +19,15 @@ class UserOut(BaseModel):
 class UserCreate(BaseModel):
     email: EmailStr
     password: constr(min_length=6)
-    password_conf: str
     name: str
     phone_number: Optional[str]
-
-    @validator('password_conf')
-    def password_match(cls, v, values, **kwargs):
-        if 'password' in values and v == values['password']:
-            return v
-        raise ValueError("Password don't match")
 
 
 class UserUpdate(BaseModel):
     password: constr(min_length=6)
-    password_conf: str
     name: str
     phone_number: Optional[str]
     client_order_count: int = 0
-
-    @validator('password_conf')
-    def password_match(cls, v, values, **kwargs):
-        if 'password' in values and v == values['password']:
-            return v
-        raise ValueError("Password don't match")
 
 
 class UserLogin(BaseModel):
