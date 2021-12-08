@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, Float, Text, DateTime, Boolean
 from src.db.user import User
+from src.db.dog import Dog
 from src.db.database import DataBase
 
 
@@ -22,3 +23,4 @@ class Order(DataBase):
 
     client_id = Column(Integer, ForeignKey(User.id), nullable=False)
     walker_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    dog_id = Column(Integer, ForeignKey(Dog.id), nullable=False)
