@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
 from src.models.walker import WalkerOut, WalkerUpdate, WalkerCreate
+from src.models.general import UserWalker
 from src.repositories import walker, user
 
 router = APIRouter(prefix="/walker", tags=["Walker"])
@@ -26,9 +27,10 @@ async def get_current_walker(session: Session = Depends(get_db),
     return curr_walker
 
 
-@router.get("/all", status_code=200, response_model=List[WalkerOut])
+@router.get("/all", status_code=200, response_model=List[UserWalker])
 async def get_all_walker(limit: int = 100, skip: int = 0, session: Session = Depends(get_db)):
-    return walker.get_all_walker(session, limit, skip)
+    mappers = walker.get_all_walker(session, limit, skip)
+    return [UserWalker(User=i.User, Walker=i.Walker) for i in mappers]
 
 
 @router.post("/", status_code=200, response_model=WalkerOut)
@@ -56,3 +58,12 @@ async def update_current_walker(walker_info: WalkerUpdate, session: Session = De
     if not walker:
         raise HTTPException(status_code=400, detail='Walker info not edit')
     return curr_walker
+
+
+@router.get('/', status_code=200, response_model=UserWalker)
+async def get_walker(id: int, session: Session = Depends(get_db)):
+    mapper = walker.get_walker_by_id(id, session)
+    if not mapper:
+        raise HTTPException(status_code=400, detail='Walker from this User not exist')
+    return UserWalker(User=mapper.User, Walker=mapper.Walker)
+

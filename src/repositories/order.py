@@ -67,3 +67,7 @@ def edit_order(o: OrderUpdate, id: int, user_id: int, s: Session):
         s.add(order)
         s.commit()
         return order
+
+
+def get_all_rating_and_reviews_walker(walker_user_id: int, s: Session):
+    return s.query(Order.rating, Order.review, Order.client_id).filter(Order.walker_id == walker_user_id).all()

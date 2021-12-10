@@ -9,8 +9,16 @@ class UserOut(BaseModel):
     phone_number: Optional[str]
     avatar_path: Optional[str]
     client_order_count: int
+    discount: Optional[int]
 
     walker_id: Optional[int]
+
+    @validator("discount", always=True)
+    def validate_count(cls, value, values):
+        if values['client_order_count'] >= 100:
+            return 10
+        else:
+            return values['client_order_count'] // 10
 
     class Config:
         orm_mode = True

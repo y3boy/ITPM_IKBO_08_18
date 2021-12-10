@@ -4,6 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from src.models.walker import WalkerCreate, WalkerUpdate
 
 from src.db.walker import Walker
+from src.db.user import User
+from src.db.order import Order
 
 
 def create_walker(w: WalkerCreate, s: Session):
@@ -26,11 +28,11 @@ def create_walker(w: WalkerCreate, s: Session):
 
 
 def get_walker_by_id(id: int, s: Session):
-    return s.query(Walker).filter(Walker.id == id).first()
+    return s.query(Walker, User).filter(User.id == id).filter(Walker.id == User.walker_id).first()
 
 
 def get_all_walker(s: Session, limit: int = 100, skip: int = 0):
-    return s.query(Walker).limit(limit).offset(skip).all()
+    return s.query(Walker, User).filter(User.walker_id == Walker.id).limit(limit).offset(skip).all()
 
 
 def edit_walker(w: WalkerUpdate, id: int, s: Session):

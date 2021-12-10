@@ -6,7 +6,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
-from src.models.order import OrderOut, OrderUpdate, OrderCreate
+from src.models.order import OrderOut, OrderUpdate, OrderCreate, RatingReview
 from src.models.general import OrderUserDog
 from src.repositories import order
 
@@ -52,3 +52,9 @@ async def update_order(order_info: OrderUpdate, order_id: int, session: Session 
     if not curr_order:
         raise HTTPException(status_code=400, detail='Access error')
     return curr_order
+
+
+@router.get('/reviews', status_code=200, response_model=List[RatingReview])
+async def get_all_rating_and_reviews_walker(walker_user_id: int, session: Session = Depends(get_db)):
+    mappers = order.get_all_rating_and_reviews_walker(walker_user_id, session)
+    return [RatingReview(rating=i.rating, review=i.review, client_id=i.client_id) for i in mappers]

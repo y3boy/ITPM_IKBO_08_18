@@ -12,6 +12,11 @@ class UserToken(BaseModel):
     Token: Optional[Token]
 
 
+class UserWalker(BaseModel):
+    User: Optional[UserOut]
+    Walker: Optional[WalkerOut]
+
+
 class OrderUserDog(BaseModel):
     Order: Optional[OrderOut]
     User: Optional[UserOut]

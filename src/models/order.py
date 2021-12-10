@@ -40,3 +40,9 @@ class OrderUpdate(BaseModel):
     walker_took_order: Optional[bool]
     client_confirmed_execution: Optional[bool]
     paid: Optional[bool]
+
+
+class RatingReview(BaseModel):
+    rating: Optional[float]
+    review: Optional[str]
+    client_id: int
