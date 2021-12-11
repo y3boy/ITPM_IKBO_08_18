@@ -14,18 +14,15 @@ router = APIRouter(prefix="/walker", tags=["Walker"])
 security = HTTPBearer()
 
 
-@router.get("/curr", status_code=200, response_model=WalkerOut)
+@router.get("/curr", status_code=200, response_model=UserWalker)
 async def get_current_walker(session: Session = Depends(get_db),
                      Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
-    curr_user = user.get_user_by_id(int(Authorize.get_jwt_subject()), session)
-    if not curr_user:
-        raise HTTPException(status_code=400, detail='User not exist')
-    curr_walker = walker.get_walker_by_id(curr_user.walker_id, session)
-    if not curr_walker:
-        raise HTTPException(status_code=400, detail='Walker info not exist')
-    return curr_walker
-
+    mapper = walker.get_walker_by_id(int(Authorize.get_jwt_subject()), session)
+    return UserWalker(
+        User=mapper.User,
+        Walker=mapper.Walker
+    )
 
 @router.get("/all", status_code=200, response_model=List[UserWalker])
 async def get_all_walker(limit: int = 100, skip: int = 0, session: Session = Depends(get_db)):

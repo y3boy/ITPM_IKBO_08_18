@@ -27,8 +27,8 @@ def create_walker(w: WalkerCreate, s: Session):
         return None
 
 
-def get_walker_by_id(id: int, s: Session):
-    return s.query(Walker, User).filter(User.id == id).filter(Walker.id == User.walker_id).first()
+def get_walker_by_id(user_id: int, s: Session):
+    return s.query(Walker, User).filter(User.id == user_id).filter(Walker.id == User.walker_id).first()
 
 
 def get_all_walker(s: Session, limit: int = 100, skip: int = 0):
