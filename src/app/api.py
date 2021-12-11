@@ -14,9 +14,21 @@ from src.db.database import engine, SessionLocal, DataBase
 from src.app.dependencies import get_db, get_settings
 from src.routers import user, walker, dog, order, auth
 
-
 app = FastAPI(title="Group project backend", version="1.0", openapi_tags=tags_metadata,
               dependencies=[Depends(get_db)])
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(walker.router)
@@ -24,7 +36,6 @@ app.include_router(dog.router)
 app.include_router(order.router)
 
 settings = get_settings()
-
 
 app.add_middleware(CORSMiddleware,
                    allow_origins=["*"],
