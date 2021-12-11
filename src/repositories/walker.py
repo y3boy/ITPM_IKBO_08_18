@@ -5,7 +5,6 @@ from src.models.walker import WalkerCreate, WalkerUpdate
 
 from src.db.walker import Walker
 from src.db.user import User
-from src.db.order import Order
 
 
 def create_walker(w: WalkerCreate, s: Session):

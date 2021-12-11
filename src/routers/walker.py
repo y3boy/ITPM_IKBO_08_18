@@ -24,6 +24,7 @@ async def get_current_walker(session: Session = Depends(get_db),
         Walker=mapper.Walker
     )
 
+
 @router.get("/all", status_code=200, response_model=List[UserWalker])
 async def get_all_walker(limit: int = 100, skip: int = 0, session: Session = Depends(get_db)):
     mappers = walker.get_all_walker(session, limit, skip)
@@ -36,10 +37,10 @@ async def create_walker(walker_info: WalkerCreate, session: Session = Depends(ge
     Authorize.jwt_required()
     curr_user = user.get_user_by_id(int(Authorize.get_jwt_subject()), session)
     if not curr_user:
-        raise HTTPException(status_code=400, detail='User not exist')
+        raise HTTPException(status_code=400, detail=[{'msg': 'User not exist'}])
     curr_walker = walker.create_walker(w=walker_info, s=session)
     if not walker:
-        raise HTTPException(status_code=400, detail='Walker info not create')
+        raise HTTPException(status_code=400, detail=[{'msg': 'Walker info not create'}])
     user.edit_walker_id(user_id=int(Authorize.get_jwt_subject()), walker_id=curr_walker.id, s=session)
     return curr_walker
 
@@ -50,10 +51,10 @@ async def update_current_walker(walker_info: WalkerUpdate, session: Session = De
     Authorize.jwt_required()
     curr_user = user.get_user_by_id(int(Authorize.get_jwt_subject()), session)
     if not curr_user:
-        raise HTTPException(status_code=400, detail='User not exist')
+        raise HTTPException(status_code=400, detail=[{'msg': 'User not exist'}])
     curr_walker = walker.edit_walker(id=curr_user.walker_id, w=walker_info, s=session)
     if not walker:
-        raise HTTPException(status_code=400, detail='Walker info not edit')
+        raise HTTPException(status_code=400, detail=[{'msg': 'Walker info not edit'}])
     return curr_walker
 
 
@@ -61,6 +62,6 @@ async def update_current_walker(walker_info: WalkerUpdate, session: Session = De
 async def get_walker(id: int, session: Session = Depends(get_db)):
     mapper = walker.get_walker_by_id(id, session)
     if not mapper:
-        raise HTTPException(status_code=400, detail='Walker from this User not exist')
+        raise HTTPException(status_code=400, detail=[{'msg': 'Walker from this User not exist'}])
     return UserWalker(User=mapper.User, Walker=mapper.Walker)
 

@@ -22,7 +22,7 @@ async def get_current_user(session: Session = Depends(get_db),
     Authorize.jwt_required()
     curr_user = user.get_user_by_id(int(Authorize.get_jwt_subject()), session)
     if not curr_user:
-        raise HTTPException(status_code=400, detail='User with this email does not exist')
+        raise HTTPException(status_code=400, detail=[{'msg': 'User with this email does not exist'}])
     return curr_user
 
 
@@ -30,7 +30,7 @@ async def get_current_user(session: Session = Depends(get_db),
 async def get_user_by_id(id: int, session: Session = Depends(get_db)):
     curr_user = user.get_user_by_id(id, session)
     if not curr_user:
-        raise HTTPException(status_code=400, detail='User with this id does not exist')
+        raise HTTPException(status_code=400, detail=[{'msg': 'User with this id does not exist'}])
     return curr_user
 
 
@@ -44,7 +44,7 @@ async def create_user(user_info: UserCreate, session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends()):
     curr_user = user.create_user(u=user_info, s=session)
     if not curr_user:
-        raise HTTPException(status_code=400, detail='User with this email already exists')
+        raise HTTPException(status_code=400, detail=[{'msg': 'User with this email already exists'}])
     token = user.create_user_token(curr_user.id, Authorize)
     return UserToken(User=curr_user, Token=token)
 
@@ -55,7 +55,7 @@ async def edit_current_user(user_info: UserUpdate, session: Session = Depends(ge
     Authorize.jwt_required()
     curr_user = user.edit_user(u=user_info, id=int(Authorize.get_jwt_subject()), s=session)
     if not curr_user:
-        raise HTTPException(status_code=400, detail='Editing failed')
+        raise HTTPException(status_code=400, detail=[{'msg': 'Editing failed'}])
     return curr_user
 
 
