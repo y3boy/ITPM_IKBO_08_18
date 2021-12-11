@@ -13,14 +13,14 @@ from src.repositories.user import get_user_by_id
 
 
 def create_order(o: OrderCreate, client_user_id: int, walker_user_id: int, dog_id: int, s: Session):
-    walker = get_walker_by_id(get_user_by_id(walker_user_id, s).walker_id, s)
+    walker = get_walker_by_id(walker_user_id, s)
     client = get_user_by_id(client_user_id, s)
     order = Order()
 
     order.datetime_of_creation = datetime.datetime.utcnow()
     order.datetime_of_walking = o.datetime_of_walking
     order.numbers_of_hours = o.numbers_of_hours
-    order.price_without_commission = walker.price_per_hour * o.numbers_of_hours
+    order.price_without_commission = walker.Walker.price_per_hour * o.numbers_of_hours
     count = client.client_order_count
     if count > 100:
         count = 100
