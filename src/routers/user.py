@@ -72,8 +72,10 @@ async def get_avatar_by_user_id(user_id: int, session: Session = Depends(get_db)
     curr_user = user.get_user_by_id(user_id, s=session)
     curr_avatar = avatar.get_avatar(curr_user.avatar_id, session)
     if curr_avatar is None:
-        print(os.path.abspath(user.__file__))
-        return FileResponse('\\avatars\\user_default_avatar.png')
+        try:
+            return FileResponse('\\src\\avatars\\user_default_avatar.png')
+        except RuntimeError:
+            return FileResponse('\\app\\src\\avatars\\user_default_avatar.png')
     return Response(content=curr_avatar.file, media_type='image/png')
 
 
