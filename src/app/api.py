@@ -1,3 +1,4 @@
+from datetime import timedelta
 from time import time
 
 from sqlalchemy.orm import Session
@@ -46,6 +47,8 @@ app.add_middleware(CORSMiddleware,
 
 class JWTSettings(BaseModel):
     authjwt_secret_key: str = settings.authjwt_secret_key
+    authjwt_access_token_expires: int = timedelta(hours=2)
+    authjwt_refresh_token_expires: int = timedelta(days=30)
 
 
 @AuthJWT.load_config
