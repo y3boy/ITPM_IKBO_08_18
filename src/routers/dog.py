@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Security, File
-from fastapi.responses import Response
+from fastapi.responses import Response, FileResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -44,12 +44,12 @@ async def edit_dog_avatar(dog_id: int, image: bytes = File(...), session: Sessio
     return dog.edit_avatar_id(dog_id=dog_id, avatar_id=mapper.id, s=session)
 
 
-@router.get("/avatar", status_code=200, response_model=DogOut)
+@router.get("/avatar", status_code=200, response_class=FileResponse)
 async def get_dog_avatar(dog_id: int, session: Session = Depends(get_db)):
     curr_dog = dog.get_dog_by_id(dog_id, session)
     curr_avatar = avatar.get_avatar(curr_dog.avatar_id, session)
     if curr_avatar is None:
-        raise HTTPException(status_code=400, detail=[{'msg': 'The user does not have an avatar'}])
+        return FileResponse('avatars/dog_default_avatar.png')
     return Response(content=curr_avatar.file, media_type='image/png')
 
 
