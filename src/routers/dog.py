@@ -49,7 +49,10 @@ async def get_dog_avatar(dog_id: int, session: Session = Depends(get_db)):
     curr_dog = dog.get_dog_by_id(dog_id, session)
     curr_avatar = avatar.get_avatar(curr_dog.avatar_id, session)
     if curr_avatar is None:
-        return FileResponse('\\avatars\\dog_default_avatar.png')
+        try:
+            return FileResponse('avatars/dog_default_avatar.png')
+        except RuntimeError as e:
+            return FileResponse('/app/avatars/dog_default_avatar.png')
     return Response(content=curr_avatar.file, media_type='image/png')
 
 
