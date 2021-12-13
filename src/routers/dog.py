@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
 from src.models.dog import DogOut, DogUpdate, DogCreate
-from src.repositories import dog, avatar, user
+from src.repositories import dog, avatar
 
 router = APIRouter(prefix="/dog", tags=["Dog"])
 security = HTTPBearer()
