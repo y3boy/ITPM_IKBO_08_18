@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Security, File
@@ -71,10 +72,8 @@ async def get_avatar_by_user_id(user_id: int, session: Session = Depends(get_db)
     curr_user = user.get_user_by_id(user_id, s=session)
     curr_avatar = avatar.get_avatar(curr_user.avatar_id, session)
     if curr_avatar is None:
-        try:
-            return FileResponse('\\avatars\\user_default_avatar.png')
-        except RuntimeError as e:
-            return FileResponse('/app/avatars/dog_default_avatar.png')
+        print(os.path.abspath(user.__file__))
+        return FileResponse('\\avatars\\user_default_avatar.png')
     return Response(content=curr_avatar.file, media_type='image/png')
 
 
