@@ -6,7 +6,6 @@ from src.db.database import DataBase
 class Walker(DataBase):
     __tablename__ = 'walker'
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
-    rating = Column(Float(precision=10), default=0, nullable=False)
     counter = Column(Integer, default=0, nullable=False)
     price_per_hour = Column(Integer, nullable=False)
     stations = Column(ARRAY(String), nullable=False)

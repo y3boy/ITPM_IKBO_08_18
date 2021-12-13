@@ -4,7 +4,7 @@ from pydantic import BaseModel, root_validator
 
 class WalkerOut(BaseModel):
     id: int
-    rating: int
+    rating: Optional[float]
     counter: int
     price_per_hour: int
     stations: List[str]
@@ -31,7 +31,6 @@ class WalkerCreate(BaseModel):
 
 
 class WalkerUpdate(BaseModel):
-    rating: int
     price_per_hour: int
     counter: int
     stations: List[str]

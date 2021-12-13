@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from src.app.dependencies import get_db
 from src.models.walker import WalkerOut, WalkerUpdate, WalkerCreate
 from src.models.general import UserWalker
-from src.repositories import walker, user
+from src.repositories import walker, user, order
 
 router = APIRouter(prefix="/walker", tags=["Walker"])
 security = HTTPBearer()
@@ -19,9 +19,21 @@ async def get_current_walker(session: Session = Depends(get_db),
                      Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     Authorize.jwt_required()
     mapper = walker.get_walker_by_id(int(Authorize.get_jwt_subject()), session)
+    ratings = order.get_all_rating_and_reviews_walker(int(Authorize.get_jwt_subject()), session)
+    sum_rating = 0
+    count_rating = 0
+    for i in ratings:
+        if i.rating:
+            sum_rating += i.rating
+            count_rating += 1
+    try:
+        rating = sum_rating / count_rating
+    except ZeroDivisionError:
+        rating = 0
+    mapper.Walker.rating = rating
     return UserWalker(
         User=mapper.User,
-        Walker=mapper.Walker
+        Walker=mapper.Walker,
     )
 
 
@@ -59,9 +71,21 @@ async def update_current_walker(walker_info: WalkerUpdate, session: Session = De
 
 
 @router.get('/', status_code=200, response_model=UserWalker)
-async def get_walker(id: int, session: Session = Depends(get_db)):
-    mapper = walker.get_walker_by_id(id, session)
-    if not mapper:
+async def get_walker(user_id: int, session: Session = Depends(get_db)):
+    curr_walker = walker.get_walker_by_id(user_id, session)
+    if not curr_walker:
         raise HTTPException(status_code=400, detail=[{'msg': 'Walker from this User not exist'}])
-    return UserWalker(User=mapper.User, Walker=mapper.Walker)
+    ratings = order.get_all_rating_and_reviews_walker(user_id, session)
+    sum_rating = 0
+    count_rating = 0
+    for i in ratings:
+        if i.rating:
+            sum_rating += i.rating
+            count_rating += 1
+    try:
+        rating = sum_rating / count_rating
+    except ZeroDivisionError:
+        rating = 0
+    curr_walker.Walker.rating = rating
+    return UserWalker(User=curr_walker.User, Walker=curr_walker.Walker)
 

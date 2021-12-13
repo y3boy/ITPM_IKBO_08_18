@@ -36,7 +36,6 @@ def get_all_walker(s: Session, limit: int = 100, skip: int = 0):
 
 def edit_walker(w: WalkerUpdate, id: int, s: Session):
     walker = s.query(Walker).filter(Walker.id == id).first()
-    walker.rating = w.rating
     walker.price_per_hour = w.price_per_hour
     walker.counter = w.counter
     walker.stations = w.stations
