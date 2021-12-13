@@ -26,7 +26,7 @@ async def get_all_current_client_order(session: Session = Depends(get_db),
     return [OrderUserDog(Order=i.Order, User=i.User, Dog=i.Dog) for i in mappers]
 
 
-@router.get("/walker_all", status_code=200, response_model=List[OrderOut])
+@router.get("/walker_all", status_code=200, response_model=List[OrderUserDog])
 async def get_all_current_walker_order(session: Session = Depends(get_db),
                                        Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
     mappers = order.get_all_walker_order(int(Authorize.get_jwt_subject()), s=session)
