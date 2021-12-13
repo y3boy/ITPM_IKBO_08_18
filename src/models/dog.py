@@ -7,7 +7,6 @@ class DogOut(BaseModel):
     id: int
     breed: str
     nickname: str
-    avatar_path: Optional[str]
     size_in_kg: Optional[int]
     date_of_birth: Optional[datetime]
 

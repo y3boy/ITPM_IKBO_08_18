@@ -80,18 +80,18 @@ def edit_walker_id(user_id: int, walker_id: int, s: Session):
     return user
 
 
-def edit_avatar_path(id: int, avatar_path: str, s: Session):
-    user = s.query(User).filter(User.id == id).first()
-    user.avatar_path = avatar_path
+def edit_avatar_id(user_id: int, avatar_id: int, s: Session):
+    user = s.query(User).filter(User.id == user_id).first()
+    user.avatar_id = avatar_id
 
     s.add(user)
     s.commit()
     return user
 
 
-def delete_avatar_path(id: int, s: Session):
-    user = s.query(User).filter(User.id == id).first()
-    user.avatar_path = None
+def delete_avatar_id(user_id: int, s: Session):
+    user = s.query(User).filter(User.id == user_id).first()
+    user.avatar_id = None
 
     s.add(user)
     s.commit()

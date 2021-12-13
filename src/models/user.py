@@ -7,7 +7,6 @@ class UserOut(BaseModel):
     email: EmailStr
     name: str
     phone_number: Optional[str]
-    avatar_path: Optional[str]
     client_order_count: int
     discount: Optional[int]
 

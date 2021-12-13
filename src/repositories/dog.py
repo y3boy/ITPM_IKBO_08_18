@@ -44,23 +44,19 @@ def edit_dog(d: DogUpdate, id: int, user_id: int, s: Session):
     return None
 
 
-def edit_avatar_path(id: int, user_id: int, avatar_path: str, s: Session):
-    dog = s.query(Dog).filter(Dog.id == id).first()
-    if dog.user_id == user_id:
-        dog.avatar_path = avatar_path
+def edit_avatar_id(dog_id: int, avatar_id: int, s: Session):
+    dog = s.query(Dog).filter(Dog.id == dog_id).first()
+    dog.avatar_id = avatar_id
 
-        s.add(dog)
-        s.commit()
-        return dog
-    return None
+    s.add(dog)
+    s.commit()
+    return dog
 
 
-def delete_avatar_path(id: int, user_id: int, s: Session):
-    dog = s.query(Dog).filter(Dog.id == id).first()
-    if dog.user_id == user_id:
-        dog.avatar_path = None
+def delete_avatar_id(dog_id: int, s: Session):
+    dog = s.query(Dog).filter(Dog.id == dog_id).first()
+    dog.avatar_id = None
 
-        s.add(dog)
-        s.commit()
-        return dog
-    return None
+    s.add(dog)
+    s.commit()
+    return dog

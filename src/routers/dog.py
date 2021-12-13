@@ -1,15 +1,14 @@
 from typing import List
-import os
 
-from fastapi import APIRouter, Depends, HTTPException, Security, UploadFile, File
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, Depends, HTTPException, Security, File
+from fastapi.responses import Response
 from fastapi_jwt_auth import AuthJWT
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from src.app.dependencies import get_db
 from src.models.dog import DogOut, DogUpdate, DogCreate
-from src.repositories import dog
+from src.repositories import dog, avatar, user
 
 router = APIRouter(prefix="/dog", tags=["Dog"])
 security = HTTPBearer()
@@ -40,32 +39,28 @@ async def update_dog(dog_info: DogUpdate, dog_id: int, session: Session = Depend
 
 
 @router.patch("/avatar", status_code=200, response_model=DogOut)
-async def edit_current_user_avatar(id: int, image: UploadFile = File(...), session: Session = Depends(get_db),
-                      Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
-    Authorize.jwt_required()
-    try:
-        os.mkdir('avatars')
-    except Exception as e:
-        pass
-    try:
-        os.mkdir('avatars\\dog')
-    except Exception as e:
-        pass
-    file_name = os.getcwd() + '\\avatars\\dog\\' + str(Authorize.get_jwt_subject()) + '.' + image.filename.split('.')[-1]
-    with open(file_name, 'wb+') as f:
-        f.write(image.file.read())
-        f.close()
-    return dog.edit_avatar_path(id=id, user_id=int(Authorize.get_jwt_subject()), avatar_path=jsonable_encoder(file_name), s=session)
+async def edit_dog_avatar(dog_id: int, image: bytes = File(...), session: Session = Depends(get_db)):
+    mapper = avatar.create_avatar(file=image, s=session)
+    return dog.edit_avatar_id(dog_id=dog_id, avatar_id=mapper.id, s=session)
+
+
+@router.get("/avatar", status_code=200, response_model=DogOut)
+async def get_dog_avatar(dog_id: int, session: Session = Depends(get_db)):
+    curr_dog = dog.get_dog_by_id(dog_id, session)
+    curr_avatar = avatar.get_avatar(curr_dog.avatar_id, session)
+    if curr_avatar is None:
+        raise HTTPException(status_code=400, detail=[{'msg': 'The user does not have an avatar'}])
+    return Response(content=curr_avatar.file, media_type='image/png')
 
 
 @router.delete("/avatar", status_code=200, response_model=DogOut)
-async def delete_current_user_avatar(dog_id: int, session: Session = Depends(get_db),
-                                     Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
-    Authorize.jwt_required()
-    corr_dog = dog.get_dog_by_id(dog_id, session)
-    try:
-        os.remove(corr_dog.avatar_path)
-        return dog.delete_avatar_path(id=dog_id, user_id=int(Authorize.get_jwt_subject()), s=session)
-    except Exception as e:
-        pass
+async def delete_dog_avatar(dog_id: int, session: Session = Depends(get_db)):
+    curr_dog = dog.get_dog_by_id(dog_id, session)
+    curr_avatar = avatar.get_avatar(curr_dog.avatar_id, session)
+    if curr_avatar is None:
+        raise HTTPException(status_code=400, detail=[{'msg': 'The user does not have an avatar'}])
+    avatar.delete_avatar(curr_avatar.id, session)
+    return dog.delete_avatar_id(dog_id, session)
+
+
 
