@@ -27,7 +27,7 @@ async def get_current_walker(session: Session = Depends(get_db),
             sum_rating += i.rating
             count_rating += 1
     try:
-        rating = sum_rating / count_rating
+        rating = round(sum_rating / count_rating, 1)
     except ZeroDivisionError:
         rating = 0
     mapper.Walker.rating = rating
@@ -40,7 +40,22 @@ async def get_current_walker(session: Session = Depends(get_db),
 @router.get("/all", status_code=200, response_model=List[UserWalker])
 async def get_all_walker(limit: int = 100, skip: int = 0, session: Session = Depends(get_db)):
     mappers = walker.get_all_walker(session, limit, skip)
-    return [UserWalker(User=i.User, Walker=i.Walker) for i in mappers]
+    result = []
+    for i in mappers:
+        ratings = order.get_all_rating_and_reviews_walker(i.User.id, session)
+        sum_rating = 0
+        count_rating = 0
+        for j in ratings:
+            if j.rating:
+                sum_rating += j.rating
+                count_rating += 1
+        try:
+            rating = round(sum_rating / count_rating, 1)
+        except ZeroDivisionError:
+            rating = 0
+        i.Walker.rating = rating
+        result.append(UserWalker(User=i.User, Walker=i.Walker))
+    return result
 
 
 @router.post("/", status_code=200, response_model=WalkerOut)
@@ -83,7 +98,7 @@ async def get_walker(user_id: int, session: Session = Depends(get_db)):
             sum_rating += i.rating
             count_rating += 1
     try:
-        rating = sum_rating / count_rating
+        rating = round(sum_rating / count_rating, 1)
     except ZeroDivisionError:
         rating = 0
     curr_walker.Walker.rating = rating
