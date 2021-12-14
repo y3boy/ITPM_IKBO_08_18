@@ -12,5 +12,5 @@ class Dog(DataBase):
     size_in_kg = Column(Integer, nullable=True)
     date_of_birth = Column(DateTime, nullable=True)
 
-    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    avatar_id = Column(Integer, ForeignKey(Avatar.id), nullable=True)
+    user_id = Column(Integer, ForeignKey(User.id, ondelete='CASCADE'), nullable=False)
+    avatar_id = Column(Integer, ForeignKey(Avatar.id, ondelete='CASCADE'), nullable=True)

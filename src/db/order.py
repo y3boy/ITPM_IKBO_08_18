@@ -21,6 +21,6 @@ class Order(DataBase):
     client_confirmed_execution = Column(Boolean, nullable=True, default=None)
     paid = Column(Boolean, nullable=True, default=None)
 
-    client_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    walker_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    dog_id = Column(Integer, ForeignKey(Dog.id), nullable=False)
+    client_id = Column(Integer, ForeignKey(User.id, ondelete='CASCADE'), nullable=False)
+    walker_id = Column(Integer, ForeignKey(User.id, ondelete='CASCADE'), nullable=False)
+    dog_id = Column(Integer, ForeignKey(Dog.id, ondelete='CASCADE'), nullable=False)

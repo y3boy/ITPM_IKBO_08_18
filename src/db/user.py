@@ -13,6 +13,6 @@ class User(DataBase):
     phone_number = Column(String, nullable=True)
     client_order_count = Column(Integer, nullable=False, default=0)
 
-    walker_id = Column(Integer, ForeignKey(Walker.id), nullable=True, unique=True)
-    avatar_id = Column(Integer, ForeignKey(Avatar.id), nullable=True)
+    walker_id = Column(Integer, ForeignKey(Walker.id, ondelete='CASCADE'), nullable=True, unique=True)
+    avatar_id = Column(Integer, ForeignKey(Avatar.id, ondelete='CASCADE'), nullable=True)
 

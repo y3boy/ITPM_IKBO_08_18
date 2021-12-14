@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from src.models.user import UserCreate, UserUpdate
 from src.models.token import Token
 from src.db.user import User
+from src.db.walker import Walker
 
 
 def __hash_password(password: str, salt: str = None):
@@ -82,7 +83,10 @@ def edit_walker_id(user_id: int, walker_id: int, s: Session):
 
 def delete_user(user_id: int, s: Session):
     user = s.query(User).filter(User.id == user_id).first()
+    walker = s.query(Walker).filter(Walker.id == user.walker_id).first()
     s.delete(user)
+    if walker:
+        s.delete(walker)
     s.commit()
     return user
 
