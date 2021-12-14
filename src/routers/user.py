@@ -59,6 +59,13 @@ async def edit_current_user(user_info: UserUpdate, session: Session = Depends(ge
     return curr_user
 
 
+@router.delete('/', status_code=200, response_model=UserOut)
+async def delete_current_user(session: Session = Depends(get_db),
+                              Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):
+    Authorize.jwt_required()
+    return user.delete_user(user_id=int(Authorize.get_jwt_subject()), s=session)
+
+
 @router.patch("/avatar", status_code=200, response_model=UserOut)
 async def edit_current_user_avatar(image: bytes = File(...), session: Session = Depends(get_db),
                       Authorize: AuthJWT = Depends(), auth: HTTPAuthorizationCredentials = Security(security)):

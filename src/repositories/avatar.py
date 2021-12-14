@@ -13,11 +13,6 @@ def create_avatar(file, s: Session):
     s.add(avatar)
     s.commit()
     return avatar
-    # try:
-    #     s.commit()
-    #     return avatar
-    # except IntegrityError:
-    #     return None
 
 
 def get_avatar(id: int, s: Session):
@@ -27,5 +22,6 @@ def get_avatar(id: int, s: Session):
 def delete_avatar(id: int, s: Session):
     avatar = s.query(Avatar).filter(Avatar.id == id).first()
     s.delete(avatar)
+    s.commit()
     return avatar
 

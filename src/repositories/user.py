@@ -80,6 +80,13 @@ def edit_walker_id(user_id: int, walker_id: int, s: Session):
     return user
 
 
+def delete_user(user_id: int, s: Session):
+    user = s.query(User).filter(User.id == user_id).first()
+    s.delete(user)
+    s.commit()
+    return user
+
+
 def edit_avatar_id(user_id: int, avatar_id: int, s: Session):
     user = s.query(User).filter(User.id == user_id).first()
     user.avatar_id = avatar_id
