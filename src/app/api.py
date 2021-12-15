@@ -20,6 +20,7 @@ app = FastAPI(title="Group project backend", version="1.0", openapi_tags=tags_me
 
 origins = [
     "http://localhost:3000",
+    "https://boiling-thicket-24101.herokuapp.com"
 ]
 
 app.add_middleware(
