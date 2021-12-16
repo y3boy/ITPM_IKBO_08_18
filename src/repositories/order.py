@@ -18,7 +18,7 @@ def create_order(o: OrderCreate, client_user_id: int, walker_user_id: int, dog_i
     order = Order()
 
     order.datetime_of_creation = datetime.datetime.utcnow()
-    order.datetime_of_walking = o.datetime_of_walking
+    order.datetime_of_walking = o.datetime_of_walking - datetime.timedelta(hours=3)
     order.numbers_of_hours = o.numbers_of_hours
     order.price_without_commission = walker.Walker.price_per_hour * o.numbers_of_hours
     count = client.client_order_count
