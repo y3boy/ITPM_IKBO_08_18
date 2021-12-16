@@ -13,7 +13,7 @@ def create_dog(d: DogCreate, user_id: int, s: Session):
     dog.breed = d.breed
     dog.nickname = d.nickname
     dog.size_in_kg = d.size_in_kg
-    dog.date_of_birth = d.date_of_birth - datetime.timedelta(hours=3)
+    dog.date_of_birth = d.date_of_birth
     dog.user_id = user_id
 
     s.add(dog)
